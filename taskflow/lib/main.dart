@@ -21,16 +21,37 @@ class TaskFlowApp extends StatelessWidget {
   }
 }
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    const studentName = 'Lisbeth Dolores Aray Gaón';
-    const pendingTasks = 5;
-    const courseName = 'Desarrollo de aplicaciones móviles';
-    const motivationalMessage = '¡Sigue adelante con tus tareas!';
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+}
 
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  
+  int pendingTasks = 5;
+  final String studentName = 'Lisbeth Dolores Aray Gaón';
+  final String courseName = 'Desarrollo de aplicaciones móviles';
+  final String motivationalMessage = '¡Sigue adelante con tus tareas!';
+
+
+  void completeTask() {
+    if (pendingTasks == 0) return;
+    setState(() {
+      pendingTasks--;
+    });
+  }
+
+  
+  void addTask() {
+    setState(() {
+      pendingTasks++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('TaskFlow'),
@@ -41,7 +62,7 @@ class WelcomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.check_circle_outline, size: 56),
+            const Icon(Icons.task_alt, size: 56, color: Colors.indigo),
             const SizedBox(height: 24),
             Text(
               '¡Hola, $studentName!',
@@ -60,7 +81,6 @@ class WelcomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
 
-            
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(20),
@@ -68,10 +88,34 @@ class WelcomeScreen extends StatelessWidget {
                   children: [
                     const Icon(Icons.pending_actions),
                     const SizedBox(width: 12),
-                    Text('Tareas pendientes: $pendingTasks'),
+                    Text(
+                      'Tareas pendientes: $pendingTasks',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
               ),
+            ),
+            const SizedBox(height: 24),
+
+            // Botones para aumentar y disminuir tareas
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: completeTask,
+                  icon: const Icon(Icons.check),
+                  label: const Text('Completar'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: addTask,
+                  icon: const Icon(Icons.add),
+                  label: const Text('Agregar'),
+                ),
+              ],
             ),
           ],
         ),
