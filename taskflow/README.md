@@ -55,3 +55,19 @@ Usuario objetivo: estudiante universitario de ingeniería/desarrollo de software
 
 La API concreta se elegirá después. Estas rutas son requisitos, no
 direcciones de un servidor ya conectado.
+
+
+## API de tareas
+TaskFlow consulta tareas remotas mediante `Dio`, `Future` y `async/await` siguiendo la arquitectura **Service → Repository → ViewModel**.
+
+- **URL exacta:** `https://jsonplaceholder.typicode.com/todos`[cite: 3, 4]
+- **Parámetro `userId`:** Se envía como parámetro de consulta (`?userId=3`) para filtrar las tareas de un usuario específico[cite: 3, 4]. Para este proyecto se cambió la constante `userId` de `TaskApiService` al valor **`3`** y se comprobaron sus tareas[cite: 3, 4].
+- **Campos que llegan desde la API:** `id`, `title`, `completed` (mapeado a `isCompleted` en `Task.fromJson`) y `userId`[cite: 3, 4].
+- **Valores que TaskFlow completa por defecto:** Cuando la API remota no incluye estos campos, `Task.fromJson` asigna `'Sin descripción (API)'` en `description` y `'Sin prioridad (API)'` en `priority`[cite: 2, 3].
+- **Marcado de tareas local:** Marcar o desmarcar una tarea como completada sigue siendo **local (en memoria)**; el cambio no se envía ni persiste en el servidor remoto al reiniciar la aplicación[cite: 2, 3].
+
+### Cadena Service → Repository → ViewModel
+
+- **Qué parte conoce la URL:** `TaskApiService` conoce la base `https://jsonplaceholder.typicode.com` y consulta el endpoint `/todos` pasando el parámetro `userId` mediante `Dio`[cite: 3, 4].
+- **Qué parte convierte el JSON:** `TaskApiService` recibe la lista de mapas JSON y `Task.fromJson` convierte cada elemento en un objeto `Task` (completando los campos faltantes por defecto), mientras `RemoteTaskRepository` expone el resultado como `Future<List<Task>>`[cite: 2, 3, 4].
+- **Qué parte avisa a la vista:** `TasksViewModel` invoca al repositorio de forma asíncrona (`async`/`await`), actualiza su estado interno y notifica a la vista para refrescar la pantalla[cite: 2, 3].
