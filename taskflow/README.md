@@ -71,3 +71,13 @@ TaskFlow consulta tareas remotas mediante `Dio`, `Future` y `async/await` siguie
 - **Qué parte conoce la URL:** `TaskApiService` conoce la base `https://jsonplaceholder.typicode.com` y consulta el endpoint `/todos` pasando el parámetro `userId` mediante `Dio`[cite: 3, 4].
 - **Qué parte convierte el JSON:** `TaskApiService` recibe la lista de mapas JSON y `Task.fromJson` convierte cada elemento en un objeto `Task` (completando los campos faltantes por defecto), mientras `RemoteTaskRepository` expone el resultado como `Future<List<Task>>`[cite: 2, 3, 4].
 - **Qué parte avisa a la vista:** `TasksViewModel` invoca al repositorio de forma asíncrona (`async`/`await`), actualiza su estado interno y notifica a la vista para refrescar la pantalla[cite: 2, 3].
+
+
+## Sesión 8: Estados asíncronos en TaskFlow
+
+Para verificar el manejo de estados de la lista remota (`ChangeNotifier`), se provocaron los siguientes escenarios:
+
+- **Estado de Éxito:** Con conexión a internet activa y un `userId` válido (`userId = 3`), la aplicación obtiene y muestra la lista de tareas desde la API, permitiendo navegar al detalle correspondiente de cada tarea.
+- **Estado de Carga:** Desde las herramientas de desarrollador de Chrome (*DevTools > Network*), se limitó la velocidad de red a **3G** y se pulsó el botón de recarga (`↻`) para visualizar el indicador circular de carga durante la petición.
+- **Estado Vacío:** En `TaskApiService`, se cambió temporalmente la constante `userId` por `9999` y se reinició la aplicación (*Hot Restart*), comprobando el mensaje *"Todavía no hay tareas"* junto con el botón **Actualizar**. Posteriormente se restauró el `userId = 3`.
+- **Estado de Error y Reintento:** Se desactivó la conexión a internet (modo *Offline*) y se recargó la lista para verificar el mensaje *"No se pudieron cargar las tareas."* y el botón **Reintentar**. Al reactivar la conexión y pulsar **Reintentar**, la lista se recuperó sin necesidad de reiniciar la aplicación.
